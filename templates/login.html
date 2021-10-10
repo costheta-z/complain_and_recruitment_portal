@@ -1,0 +1,47 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title> Login </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+
+<body>
+
+    <video autoplay muted loop id="myVideo">
+        <source src="{{ url_for('static', filename='rain.mp4') }}" type="video/mp4">
+    </video>
+    <div align="center" class="content">
+        </br>
+        </br>
+        </br>
+        </br>
+        <div align="center" class="border">
+            </br>
+            </br>
+            <h2 class="word">
+                <form action="{{ url_for('login') }}" method="post">
+                    <div class="msg">{{ msg }}</div>
+                    </br>
+                    <input id="ID" name="ID" type="text" placeholder="Id" class="textbox" /></br>
+                    </br>
+                    <input id="password" name="password" type="password" placeholder="Password" class="textbox" /></br>
+                    </br>
+                    </br>
+                    <input type="submit" class="btn" value="Sign In"></br>
+                    </br>
+                </form>
+            </h2>
+
+        </div>
+        <div class="topnav">
+            <a href="{{url_for('login')}}" class="active">Login</a>
+            <a href="{{url_for('register')}}">Register</a>
+            <a><button id="myBtn" onclick="myFunction()">Pause</button></a>
+            <!-- <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction2()">&#9776;</a> -->
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='indexjs.js') }}"></script>
+</body>
+
+</html>

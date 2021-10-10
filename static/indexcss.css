@@ -1,0 +1,155 @@
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #121212;
+}
+
+.topnav {
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    overflow: hidden;
+    background-color: rgb(46, 45, 45);
+}
+
+.topnav a {
+    float: left;
+    color: #f2f2f2e3;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    position: sticky;
+}
+
+.topnav a:hover {
+    background-color: rgba(221, 221, 221, 0.856);
+    color: black;
+}
+
+.topnav a.active {
+    position: sticky;
+    background-color: #121212;
+    color: white;
+}
+
+.topnav a.active:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.row {
+    display: flex;
+    padding: 10px;
+}
+
+.column {
+    flex: 40%;
+    padding: 10px;
+}
+
+.column2 {
+    flex: 60%;
+    padding: 10px;
+    border-radius: 20px;
+    color: #ffffffd3;
+}
+
+.small {
+    font-size: small;
+    padding: 10;
+}
+
+.title {
+    font-size: large;
+    padding: 10
+}
+
+.sidenav {
+    width: 155px;
+    position: fixed;
+    z-index: 1;
+    top: 55px;
+    left: 0px;
+    bottom: 0;
+    background: #121212;
+    overflow-x: hidden;
+    padding: 8px 0;
+}
+
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    background-color: #333;
+    display: block;
+    color: #ffffffcb;
+}
+
+.sidenav a:hover {
+    background-color: #70eaff;
+    color: black;
+}
+
+button {
+    border-radius: 9px;
+    cursor: pointer;
+    background-color: #eaa3ff
+}
+
+button :hover {
+    background: #ccc;
+}
+
+.content {
+    margin-left: 140px;
+    padding: 0px 10px;
+}
+
+.likebt {
+    background-color: #ff7a7a;
+}
+
+.cartbt {
+    background-color: #6fffdb;
+}
+
+@media screen and (max-height: 450px) {
+    .sidenav {
+        padding-top: 15px;
+    }
+    .sidenav a {
+        font-size: 18px;
+    }
+}
+
+.forms {
+    color: rgba(255, 255, 255, 0.692);
+    padding: 6px 8px 6px 16px;
+}
+
+.topnav .search-container {
+    float: right;
+}
+
+.topnav input[type=text] {
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 0px;
+    font-size: 13px;
+    border: none;
+    padding: 3px;
+}
+
+.topnav .search-container button {
+    float: right;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 0px;
+    background: rgb(255, 167, 211);
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.topnav .search-container button:hover {
+    background: #ccc;
+}
