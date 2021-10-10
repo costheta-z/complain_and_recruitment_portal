@@ -29,8 +29,6 @@
                             <br><br>
                             <textarea rows="4" cols="50" name="description" placeholder="Enter complain details here"></textarea>
                             <br><br>
-                            <textarea rows="4" cols="50" name="designation" placeholder="Enter designation here"></textarea>
-                            <br><br>
                             <input type="submit" name="submit" class="btn btn-success" value="UPLOAD" />
                         </form>
                     </div>
@@ -58,6 +56,12 @@
 
                 <hr>
                 <div>Complain ID: {{imgfound.0}}</div>
+                <div>Complainer Name: {{imgfound.5}} {{imgfound.6}}</div>
+                <div>Complainer Department: {{imgfound.7}}</div>
+                <div>Complainer Designation: {{imgfound.8}}</div>
+                <div>Email: {{imgfound.9}}</div>
+                <div>Contact: {{imgfound.10}}</div>
+                <hr>
                 <div>Complain Details: {{imgfound.3}}</div>
             </div>
             {% else %} {% set ns.i=True %} </br>
@@ -76,6 +80,12 @@
                 <div>Status: {{imgfound.1}}</div>
                 <hr>
                 <div>Complain ID: {{imgfound.0}}</div>
+                <div>Complainer Name: {{imgfound.5}} {{imgfound.6}}</div>
+                <div>Complainer Department: {{imgfound.7}}</div>
+                <div>Complainer Designation: {{imgfound.8}}</div>
+                <div>Email: {{imgfound.9}}</div>
+                <div>Contact: {{imgfound.10}}</div>
+                <hr>
                 <div>Complain Details: {{imgfound.3}}</div>
             </div>
             {% endif %}

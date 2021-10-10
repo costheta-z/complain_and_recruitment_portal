@@ -17,12 +17,12 @@ import pdfkit
 app = Flask(__name__)
 warning=""
 
-app.secret_key = 'put your secret key here'
+app.secret_key = '534613'
 
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'put you password here'
-app.config['MYSQL_DB'] = 'put your db name here'
+app.config['MYSQL_PASSWORD'] = 'MySQL_password24'
+app.config['MYSQL_DB'] = 'dbmsset3'
 
 mysql = MySQL(app)
 
@@ -49,30 +49,31 @@ def stu_or_fac():
 
 	cur.execute('''
 	CREATE TABLE IF NOT EXISTS stu_complainsDB (complain_id integer primary key auto_increment, 
-	enrol_no varchar(20) not null, status integer default 0, complain_type varchar(20),
-	complain_details varchar(500))
+	enrol_no varchar(20) not null, status integer default 0, complain_type varchar(50),
+	complain_details varchar(1000))
 	''')
 
 	cur.execute('''
 	CREATE TABLE IF NOT EXISTS facultyDB (emp_id varchar(20) NOT NULL PRIMARY KEY, 
 	first_name varchar(50) NOT NULL, last_name varchar(50) NOT NULL default \'\', 
 	password varchar(300) NOT NULL, gender varchar(10) DEFAULT \'Other\',
-	category varchar(30) NOT NULL, email varchar(100) NOT NULL, department varchar(50), mobile_no varchar(10))
+	category varchar(30) NOT NULL, email varchar(100) NOT NULL, department varchar(50), 
+	mobile_no varchar(10), designation varchar(40) NOT NULL)
 	''')
 
 	cur.execute('''
 	CREATE TABLE IF NOT EXISTS fac_complainsDB (complain_id integer primary key auto_increment, 
-	emp_id varchar(20) not null, status integer default 0, complain_type varchar(20),
-	complain_details varchar(500), designation varchar(20) NOT NULL)
+	emp_id varchar(20) not null, status integer default 0, complain_type varchar(50),
+	complain_details varchar(1000))
 	''')
 
 	cur.execute('''
-	CREATE TABLE IF NOT EXISTS adminDB (email varchar(40) primary key, 
+	CREATE TABLE IF NOT EXISTS adminDB (email varchar(50) primary key, 
 	password varchar(300) not null)
 	''')
 
 	adminemail='nandinikapoor24601@gmail.com'
-	password='adminpassword'
+	password='adm'
 	password=generate_password_hash(password)
 
 	cur.execute('select * from adminDB where email=%s', (adminemail, ))
@@ -86,7 +87,7 @@ def stu_or_fac():
 
 
 	cur.close()
-	msg = 'Log in as Student/Faculty/Admin'
+	msg = 'Log into complain management system'
 	return render_template('sorf.html', msg = msg)
 
 @app.route('/determine', methods =['GET', 'POST'])
@@ -94,13 +95,11 @@ def determine():
 	global who
 	if request.method == 'POST':
 		who = request.form['user']
-		print('here')
 	return redirect(url_for('login'))
 
 @app.route('/login', methods =['GET', 'POST'])
 def login():
 	global who
-	print(who)
 	msg = 'Log In'
 	if who=='Student':
 		msg = 'Student Log In'
@@ -136,7 +135,6 @@ def login():
 def logout():
 	session.pop('loggedin', None)
 	session.pop('id', None)
-	session.pop('who', None)
 	return redirect(url_for('stu_or_fac'))
 
 @app.route('/register', methods =['GET', 'POST'])
@@ -179,10 +177,12 @@ def register():
 		email = request.form['email']
 		dept = request.form['department']
 		mobile = request.form['mobile']
+		desi=''
 		cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 		if who=='Student':
 			cur.execute('SELECT * FROM studentDB WHERE enrol_no = % s', (id, ))
 		elif who=='Faculty':
+			desi = request.form['desi']
 			cur.execute('SELECT * FROM facultyDB WHERE emp_id = % s', (id, ))
 		account = cur.fetchone()
 		cur.close()
@@ -203,8 +203,8 @@ def register():
 				''', (id, fname, lname, password, gender, category, email, dept, mobile, ))
 			elif who=='Faculty':
 				cur.execute('''INSERT INTO facultyDB VALUES 
-				(% s, %s, %s, %s, %s, %s, %s, %s, %s)
-				''', (id, fname, lname, password, gender, category, email, dept, mobile, ))
+				(% s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+				''', (id, fname, lname, password, gender, category, email, dept, mobile, desi, ))
 			mysql.connection.commit()
 			cur.close()
 			msg = 'You have successfully registered'
@@ -223,6 +223,12 @@ def admin():
 	statuses=[]
 	thru=[]
 	sid=[]
+	desis=[]
+	names=[]
+	surns=[]
+	depts=[]
+	ems=[]
+	mns=[]
 	cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 	cur.execute('SELECT * FROM stu_complainsDB JOIN studentDB ON stu_complainsDB.enrol_no=studentDB.enrol_no')
 	files_are = cur.fetchall()
@@ -230,8 +236,14 @@ def admin():
 	files_are2 = cur.fetchall()
 	cur.close()
 	for file in files_are:
+		names.append(file['first_name'])
+		surns.append(file['last_name'])
+		depts.append(file['department'])
+		ems.append(file['email'])
+		mns.append(file['mobile_no'])
 		cids.append(file['complain_id'])
 		descs.append(file['complain_details'])
+		desis.append('Student')
 		types.append(file['complain_type'])
 		if(file['status']==1):
 			statuses.append('Resolved')
@@ -241,8 +253,14 @@ def admin():
 		thru.append('student')
 		sid.append(str(file['complain_id'])+'s')
 	for file in files_are2:
+		names.append(file['first_name'])
+		surns.append(file['last_name'])
+		depts.append(file['department'])
+		ems.append(file['email'])
+		mns.append(file['mobile_no'])
 		cids.append(file['complain_id'])
 		descs.append(file['complain_details'])
+		desis.append(file['designation'])
 		types.append(file['complain_type'])
 		if(file['status']==1):
 			statuses.append('Resolved')
@@ -252,7 +270,7 @@ def admin():
 		thru.append('faculty')
 		sid.append(str(file['complain_id'])+'f')
 	print(len(files_are2))
-	return render_template('index.html', lis=zip(cids, statuses, types, descs, ids, thru, sid))
+	return render_template('index.html', lis=zip(cids, statuses, types, descs, ids, thru, sid, names, surns, depts, desis, ems, mns))
 	
 
 @app.route('/complain_form', methods =['GET', 'POST'])
@@ -262,15 +280,26 @@ def complain_form():
 	types=[]
 	descs=[]
 	comb=[]
+	desis=[]
+	names=[]
+	surns=[]
+	depts=[]
+	ems=[]
+	mns=[]
 	global who
 	cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 	if who=='Student':
-		cur.execute('SELECT * FROM stu_complainsDB WHERE enrol_no = % s', (session['id'], ))
+		cur.execute('SELECT * FROM stu_complainsDB JOIN studentDB ON stu_complainsDB.enrol_no=studentDB.enrol_no WHERE studentDB.enrol_no = % s', (session['id'], ))
 	else:
-		cur.execute('SELECT * FROM fac_complainsDB WHERE emp_id = % s', (session['id'], ))
+		cur.execute('SELECT * FROM fac_complainsDB JOIN facultyDB ON facultyDB.emp_id=fac_complainsDB.emp_id WHERE facultyDB.emp_id = % s', (session['id'], ))
 	files_are = cur.fetchall()
 	cur.close()
 	for file in files_are:
+		names.append(file['first_name'])
+		surns.append(file['last_name'])
+		depts.append(file['department'])
+		ems.append(file['email'])
+		mns.append(file['mobile_no'])
 		cids.append(file['complain_id'])
 		descs.append(file['complain_details'])
 		types.append(file['complain_type'])
@@ -281,9 +310,11 @@ def complain_form():
 		cids.append(file['complain_id'])
 		if who=='Student':
 			comb.append(str(file['complain_id'])+'s')
+			desis.append('Student')
 		else:
 			comb.append(str(file['complain_id'])+'f')
-	return render_template('complain_form.html', lis=zip(cids, statuses, types, descs, comb))
+			desis.append(file['department'])
+	return render_template('complain_form.html', lis=zip(cids, statuses, types, descs, comb, names, surns, depts, desis, ems, mns))
 
 
 @app.route("/upload",methods=["POST","GET"])
@@ -292,7 +323,6 @@ def upload():
 	if request.method == 'POST':
 		title = request.form['title']
 		desc = request.form['description']
-		desig=request.form['designation']
 		cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 		if who=='Student':
 			cur.execute('SELECT * FROM studentDB WHERE enrol_no = % s', (session['id'], ))
@@ -303,9 +333,9 @@ def upload():
 		if who=='Faculty':
 			id=account['emp_id']
 			cur = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-			cur.execute('''INSERT INTO fac_complainsDB (emp_id, status, complain_type, complain_details, 
-			designation) VALUES (%s, %s, %s, %s, %s)
-			''',(session['id'], 0, title, desc, desig))
+			cur.execute('''INSERT INTO fac_complainsDB (emp_id, status, complain_type, 
+			complain_details) VALUES (%s, %s, %s, %s)
+			''',(session['id'], 0, title, desc))
 			mysql.connection.commit()
 			cur.close()
 		else:
