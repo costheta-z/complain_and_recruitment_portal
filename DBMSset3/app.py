@@ -50,8 +50,18 @@ def stu_or_fac():
 	cur.execute('''
 	CREATE TABLE IF NOT EXISTS stu_complainsDB (complain_id integer primary key auto_increment, 
 	enrol_no varchar(20) not null, status integer default 0, complain_type varchar(50),
-	complain_details varchar(5000), timest timestamp)
+	complain_details varchar(5000), timest timestamp,
+	CONSTRAINT fk_stu FOREIGN KEY (enrol_no)  
+  	REFERENCES studentDB(enrol_no)  
+  	ON DELETE CASCADE )
 	''')
+
+	# cur.execute('''
+	# ALTER TABLE stu_complainsDB
+	# ADD CONSTRAINT fk_stu FOREIGN KEY (enrol_no)  
+  	# REFERENCES studentDB(enrol_no)  
+  	# ON DELETE CASCADE 
+	# ''')
 
 	cur.execute('''
 	CREATE TABLE IF NOT EXISTS facultyDB (emp_id varchar(20) NOT NULL PRIMARY KEY, 
@@ -64,13 +74,29 @@ def stu_or_fac():
 	cur.execute('''
 	CREATE TABLE IF NOT EXISTS fac_complainsDB (complain_id integer primary key auto_increment, 
 	emp_id varchar(20) not null, status integer default 0, complain_type varchar(50),
-	complain_details varchar(5000), timest timestamp)
+	complain_details varchar(5000), timest timestamp,
+	CONSTRAINT fk_fac FOREIGN KEY (emp_id)  
+  	REFERENCES facultyDB(emp_id)  
+  	ON DELETE CASCADE )
 	''')
+
+	# cur.execute('''
+	# ALTER TABLE fac_complainsDB
+	# ADD CONSTRAINT fk_fac FOREIGN KEY (emp_id)  
+  	# REFERENCES facultyDB(emp_id)  
+  	# ON DELETE CASCADE  
+	# ''')
 
 	cur.execute('''
 	CREATE TABLE IF NOT EXISTS adminDB (email varchar(50) primary key, 
 	password varchar(300) not null)
 	''')
+
+	cur.execute('''
+	CREATE TABLE IF NOT EXISTS resolve (complain_id integer, email varchar(50), 
+	date timestamp, complainer varchar(20))
+	''')
+
 
 	adminemail='nandinikapoor24601@gmail.com'
 	password='adm'
@@ -518,6 +544,12 @@ def resolve():
 		cur.execute('update stu_complainsDB set status=1 where complain_id=%s', (cid, ))
 	else:
 		cur.execute('update fac_complainsDB set status=1 where complain_id=%s', (cid, ))
+	cur.execute('SELECT * FROM resolve where complain_id=%s and complainer=%s', (cid, ide, ))
+	files_are = cur.fetchone()
+	if files_are:
+		pass
+	else:
+		cur.execute('insert into resolve values (%s, %s, %s, %s)', (cid, session['id'], datetime.now(), ide, ))
 	mysql.connection.commit()
 	cur.close()
 	return redirect(url_for('admin'))
